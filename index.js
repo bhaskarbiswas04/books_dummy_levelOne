@@ -80,6 +80,7 @@ app.get("/books/author/:bAuthor", async (req, res)=>{
     try {
         const books = await readBooksByAuthor(req.params.bAuthor);
         if(books.length > 0) {
+            res.json(books)
             res.status(200).json({message: "Books fetched successfully."})
         }
     } catch (error) {
