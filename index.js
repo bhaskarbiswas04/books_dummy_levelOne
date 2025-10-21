@@ -66,6 +66,25 @@ app.get("/books/:bTitle", async (req, res)=> {
     } catch (error) {
         res.status(500).json({ message: "Error fetching books", error });
     }
+});
+
+async function readBooksByAuthor(bookAuthor) {
+  try {
+    const books = await BookModel.find({ author: bookAuthor });
+    return books;
+  } catch (error) {
+    throw error;
+  }
+}
+app.get("/books/author/:bAuthor", async (req, res)=>{
+    try {
+        const books = await readBooksByAuthor(req.params.bAuthor);
+        if(books) {
+            res.status(200).json({message: "Books fetched successfully."})
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching books", error });
+    }
 })
 
 
