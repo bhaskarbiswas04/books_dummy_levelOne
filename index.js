@@ -167,7 +167,7 @@ app.get("/books/author/:bAuthor", async (req, res)=>{
 //route to add a new book.
 app.post("/books", async (req, res)=> {
   try {
-    const book = new BookModel();
+    const book = new BookModel(req.body);
     await book.save();
     res.status(201).json({ message: "Book added successfully", book });
   } catch (error) {
