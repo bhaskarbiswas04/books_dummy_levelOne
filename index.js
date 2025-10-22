@@ -5,7 +5,17 @@ app.use(express.json());
 const { initializeDatabase } = require("./db/db.connect");
 const BookModel = require("./model/books.model");
 
-initializeDatabase();
+const PORT = 3000;
+
+async function startServer() {
+  await initializeDatabase();
+  // await seedInitialBooks();
+
+  app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+}
+
+startServer();
+
 
 const cors = require("cors");
 const corsOptions = {
@@ -15,29 +25,95 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// const books = [
-//   { id: 1, title: "Lean In", author: "Sheryl Sandberg", year: 2013 },
-//   { id: 2, title: "The Alchemist", author: "Paulo Coelho", year: 1988 },
-//   { id: 3, title: "Shoe Dog", author: "Phil Knight", year: 2016 },
-//   { id: 4, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960 },
-//   { id: 5, title: "Go Set a Watchman", author: "Harper Lee", year: 2015 },
-// ];
+const books = [
+  {
+    title: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    publishedYear: "1960",
+    genre: "Fiction, Classic, Coming-of-Age",
+    language: "English",
+    country: "United States",
+    rating: "4.8",
+    summary:
+      "A powerful novel set in the racially charged American South, following young Scout Finch as her father, Atticus, defends a black man unjustly accused of a crime.",
+    coverImageUrl: "https://m.media-amazon.com/images/I/81gepf1eMqL.jpg",
+  },
+  {
+    title: "Lean In",
+    author: "Sheryl Sandberg",
+    publishedYear: "2013",
+    genre: "Non-fiction, Business, Self-help",
+    language: "English",
+    country: "United States",
+    rating: "4.2",
+    summary:
+      "A call to action for women to pursue their ambitions and for society to create a more equal world, written by Facebook COO Sheryl Sandberg.",
+    coverImageUrl: "https://m.media-amazon.com/images/I/71nK4JzW0rL.jpg",
+  },
+  {
+    title: "Go Set a Watchman",
+    author: "Harper Lee",
+    publishedYear: "2015",
+    genre: "Fiction, Drama",
+    language: "English",
+    country: "United States",
+    rating: "3.9",
+    summary:
+      "Set two decades after 'To Kill a Mockingbird', the story follows Scout Finch as she returns to Maycomb, Alabama, and struggles with her father’s changing views.",
+    coverImageUrl: "https://m.media-amazon.com/images/I/81N7lm4YbKL.jpg",
+  },
+  {
+    title: "Shoe Dog",
+    author: "Phil Knight",
+    publishedYear: "2016",
+    genre: "Autobiography, Business, Memoir",
+    language: "English",
+    country: "United States",
+    rating: "4.7",
+    summary:
+      "The candid memoir of Nike’s co-founder Phil Knight, detailing the early struggles, risks, and triumphs that shaped one of the world’s most iconic brands.",
+    coverImageUrl: "https://m.media-amazon.com/images/I/71kxa1-0zfL.jpg",
+  },
+  {
+    title: "The Alchemist",
+    author: "Paulo Coelho",
+    publishedYear: "1988",
+    genre: "Fiction, Adventure, Philosophy",
+    language: "Portuguese (original), English (translated)",
+    country: "Brazil",
+    rating: "4.6",
+    summary:
+      "A spiritual tale about a young shepherd named Santiago who embarks on a journey to discover his personal legend and the meaning of true treasure.",
+    coverImageUrl: "https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg",
+  },
+];
 
-// async function seedInitialBooks() {
-//   try {
-//     const count = await BookModel.countDocuments();
-//     if (count === 0) {
-//       await BookModel.insertMany(books);
-//       console.log("Initial books seeded successfully!");
-//     } else {
-//       console.log("Books already exist in the database.");
-//     }
-//   } catch (error) {
-//     console.error("Error seeding initial books:", error);
-//   }
-// }
-// seedInitialBooks();
+async function seedInitialBooks() {
+  try {
+    for (const book of books) {
+      const newBook = new BookModel({
+        title: book.title,
+        author: book.author,
+        publishedYear: book.publishedYear,
+        genre: book.genre,
+        language: book.language,
+        country: book.country,
+        rating: book.rating,
+        summary: book.summary,
+        coverImageUrl: book.coverImageUrl,
+      });
 
+      await newBook.save();
+      console.log(`📘 Saved: ${book.title}`);
+    }
+
+    console.log("🎉 All books inserted successfully!");
+  } catch (error) {
+    console.error("❌ Error seeding initial books:", error);
+  }
+}
+
+// express routes...
 app.get("/books", async (req, res) => {
   try {
     const books = await BookModel.find();
@@ -87,9 +163,5 @@ app.get("/books/author/:bAuthor", async (req, res)=>{
         res.status(500).json({ message: "Error fetching books", error });
     }
 })
-
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 
