@@ -176,4 +176,25 @@ app.post("/books", async (req, res)=> {
   }
 })
 
+//route to delete book.
+app.delete("/books/:bookId", async (req, res) => {
+  try {
+    const bookId = req.params.bookId;
+
+    const deletedBook = await BookModel.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    res.status(200).json({
+      message: "Book deleted successfully",
+      deletedMovie,
+    });
+  } catch (error) {
+    console.error("Error while deleting book:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
