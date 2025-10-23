@@ -16,7 +16,6 @@ async function startServer() {
 
 startServer();
 
-
 const cors = require("cors");
 const corsOptions = {
   origin: "*",
@@ -180,7 +179,6 @@ app.post("/books", async (req, res)=> {
 app.delete("/books/:bookId", async (req, res) => {
   try {
     const bookId = req.params.bookId;
-
     const deletedBook = await BookModel.findByIdAndDelete(bookId);
 
     if (!deletedBook) {
